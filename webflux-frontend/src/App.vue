@@ -5,15 +5,10 @@
       <el-button @click="closeConnection">关闭连接</el-button>
     </el-header>
     <el-main>
-      <el-card v-for="(obj, index) in dataList" :key="index">
-        <img :src="obj.url" class="image" />
-        <div style="padding: 14px;">
-          <span>{{obj.name}}</span>
-          <div class="bottom">
-            {{obj.description}}
-          </div>
-        </div>
-      </el-card>
+      <el-table :data="dataList" style="width=100%">
+        <el-table-column prop="name" label="名称"></el-table-column>
+        <el-table-column prop="description" label="简介"></el-table-column>
+      </el-table>
     </el-main>
   </el-container>
 </template>
@@ -34,15 +29,8 @@ export default {
       }
       this.source = new EventSource("http://localhost:8081/city");
       this.source.onmessage = (event) => {
-        let oldobj = JSON.parse(event.data)
-        let obj = {
-          name: oldobj.name,
-          url: oldobj.url,
-          description: oldobj.description
-        }
-        if (JSON.stringify(this.dataList).indexOf(JSON.stringify(obj)) == -1) {
-          this.dataList.push(obj);
-        }
+        let obj = JSON.parse(event.data)
+        this.dataList.push(obj)
       };
     },
     closeConnection() {
